@@ -20,8 +20,16 @@ public class MemberServiceTests {
                 .build();
 
         List<Member> members = memberService.readAllByLikePhone(member);
-        if(members != null) {
-            members.forEach(m -> System.out.println(m.toString()));
+        for (Member m : members) {
+            System.out.println(m);
+        }
+    }
+
+    @Test
+    public void readAllJPA() {
+        List<Member> members = memberService.readAllJpa();
+        for (Member member : members) {
+            System.out.println(member);
         }
     }
 }

@@ -1,16 +1,38 @@
 package idusw.sb.dimo202212007.service;
 
 import idusw.sb.dimo202212007.domain.Member;
+import idusw.sb.dimo202212007.entity.MemberEntity;
 import idusw.sb.dimo202212007.repository.MemberRepository;
+import idusw.sb.dimo202212007.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class MemberServiceImpl implements MemberService {
     private MemberRepository memberRepository;
-    public MemberServiceImpl(MemberRepository memberRepository) { // 생성자 주입
+    private UserRepository userRepository;
+    public MemberServiceImpl(MemberRepository memberRepository, UserRepository userRepository) { // 생성자 주입
         this.memberRepository = memberRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public List<Member> readAllJpa() {
+        List<MemberEntity> listMemberEntity = userRepository.findAll();
+        List<Member> members = new ArrayList<>();
+        for (MemberEntity memberEntity : listMemberEntity) {
+            Member member = Member.builder()
+                    .id(memberEntity.getId())
+                    .email(memberEntity.getEmail())
+                    .fullname(memberEntity.getFullname())
+                    .phone(memberEntity.getPhone())
+                    .address(memberEntity.getAddress())
+                    .build();
+            members.add(member);
+        }
+        return members;
     }
 
     @Override
@@ -77,4 +99,5 @@ public class MemberServiceImpl implements MemberService {
         List<Member> members = memberRepository.selectAllByLikePhone(m);
         return members;
     }
+
 }

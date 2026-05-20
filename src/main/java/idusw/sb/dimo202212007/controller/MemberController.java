@@ -138,6 +138,13 @@ public class MemberController {
         return "/members/list";
     }
 
+    @GetMapping("/list-jpa")
+    public String getListJpa(Model model) {
+        List<Member> members = memberService.readAllJpa();
+        model.addAttribute("members", members);
+        return "/members/list";
+    }
+
     @GetMapping("/buttons")
     public String getButtons() {
         return "/members/buttons";

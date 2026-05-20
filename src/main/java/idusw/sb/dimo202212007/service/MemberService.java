@@ -16,4 +16,5 @@ public interface MemberService {
     int deleteById(Member m);
     List<Member> readByPhone(String lastFourDigits);
     List<Member> readAllByLikePhone(Member m);
+    List<Member> readAllJpa();
 }

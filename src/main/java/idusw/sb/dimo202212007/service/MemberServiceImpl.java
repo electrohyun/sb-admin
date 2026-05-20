@@ -33,7 +33,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public int update(Member domain) {
-        Member member = memberRepository.selectByEmailAndPassword(domain);
+        System.out.println(domain);
+        Member member = memberRepository.selectById(domain);
         if (member != null)
             return memberRepository.update(domain);
         else
@@ -69,5 +70,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<Member> readByPhone(String lastFourDigits) {
         return memberRepository.selectByPhone(lastFourDigits);
+    }
+
+    @Override
+    public List<Member> readAllByLikePhone(Member m) {
+        List<Member> members = memberRepository.selectAllByLikePhone(m);
+        return members;
     }
 }

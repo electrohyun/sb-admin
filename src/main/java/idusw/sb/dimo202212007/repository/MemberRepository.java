@@ -16,4 +16,5 @@ public interface MemberRepository {
     Member updateById(Member m, String newPw);
     int deleteById(Member m);
     List<Member> selectByPhone(String lastFourDigits);
+    List<Member> selectAllByLikePhone(Member domain);
 }

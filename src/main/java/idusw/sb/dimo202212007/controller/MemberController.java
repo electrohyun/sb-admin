@@ -27,6 +27,7 @@ public class MemberController {
         if (ret >= 1) {
             return "redirect:/main/index";
         } else {
+            model.addAttribute("errMsg", "업데이트 중 문제가 발생했습니다...");
             return "/errors/blank";
         }
     }

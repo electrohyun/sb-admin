@@ -17,7 +17,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public int insert(Member domain) {
-        String sql = "insert into member(email, pw, fullname, phone, address) values(?,?,?,?,?)";
+        String sql = "INSERT INTO member(email, pw, fullname, phone, address) VALUES(?,?,?,?,?)";
         try {
             return jdbcTemplate.update(sql, domain.getEmail(), domain.getPw(), domain.getFullname(), domain.getPhone(), domain.getAddress());
         } catch (Exception e) {
@@ -29,7 +29,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
 //    @Override
 //    public Member selectById(Member domain) {
-//        String sql = "select * from member where email=?";
+//        String sql = "SELECT * FROM member WHERE email=?";
 //        List<Member> members = jdbcTemplate.query(sql, (rs, i) ->
 //                        Member.builder()
 //                                .email(rs.getString("email"))
@@ -43,7 +43,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Member selectById(Member m) {
-        String sql = "select * from tbl_member where id = ?";
+        String sql = "SELECT * FROM member WHERE id = ?";
         try {
             Member member = jdbcTemplate.queryForObject(
                     sql,
@@ -65,7 +65,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     public Member selectById(int id) {
-        String sql = "select * from member where id = ?";
+        String sql = "SELECT * FROM member WHERE id = ?";
         List<Member> members = jdbcTemplate.query(sql, (rs, i) ->
                         Member.builder()
                                 .id(rs.getInt("id"))
@@ -79,21 +79,23 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public List<Member> selectAll() {
-        String sql = "select * from member";
+        String sql = "SELECT * FROM member";
         return jdbcTemplate.query(sql, (rs, i) ->
                 Member.builder()
                         .id(rs.getInt("id"))
                         .email(rs.getString("email"))
                         .pw(rs.getString("pw")) // password -> pw 수정
                         .fullname(rs.getString("fullname")) // fullame -> fullname 수정
+                        .phone(rs.getString("phone"))
+                        .address(rs.getString("address"))
                         .build()
         );
     }
 
     @Override
     public int update(Member domain) {
-//        String sql = "update member set fullname=?, phone=?, address=? where email=? and pw=?";
-        String sql = "update member set fullname=?, phone=?, address=? where id=?";
+//        String sql = "UPDATE member SET fullname=?, phone=?, address=? WHERE email=? AND pw=?";
+        String sql = "UPDATE member SET fullname=?, phone=?, address=? WHERE id=?";
         try {
             return jdbcTemplate.update(sql, domain.getFullname(), domain.getPhone(),
                     domain.getAddress(), domain.getId());
@@ -105,7 +107,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public int delete(Member domain) {
-        String sql = "delete from member where email=? and pw=?";
+        String sql = "DELETE FROM member WHERE email=? AND pw=?";
         try {
             return jdbcTemplate.update(sql, domain.getEmail(), domain.getPw());
         } catch (Exception e) {
@@ -116,13 +118,16 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Member selectByEmailAndPassword(String email, String pw) {
-        String sql = "select * from member where email = ? and pw = ?";
+        String sql = "SELECT * FROM member WHERE email = ? AND pw = ?";
         try {
             List<Member> members = jdbcTemplate.query(sql, (rs, i) ->
                             Member.builder()
+                                    .id(rs.getInt("id"))
                                     .email(rs.getString("email"))
                                     .pw(rs.getString("pw"))
                                     .fullname(rs.getString("fullname")) // fullame -> fullname 수정
+                                    .phone(rs.getString("phone"))
+                                    .address(rs.getString("address"))
                                     .build()
                     , email, pw);
             return members.isEmpty() ? null : members.get(0);
@@ -139,7 +144,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Member updateByEmailAndPw(Member m, String newPw) {
-        String sql = "update member set pw = ? where email = ? and pw = ?";
+        String sql = "UPDATE member SET pw = ? WHERE email = ? AND pw = ?";
         try {
             int result = jdbcTemplate.update(sql, newPw, m.getEmail(), m.getPw());
 
@@ -156,7 +161,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Member updateById(Member m, String newPw) {
-        String sql = "update member set pw = ? where id = ?";
+        String sql = "UPDATE member SET pw = ? WHERE id = ?";
         try {
             int result = jdbcTemplate.update(sql, newPw, m.getId());
 
@@ -171,7 +176,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public int deleteById(Member m) {
-        String sql = "delete from member where id = ?";
+        String sql = "DELETE FROM member WHERE id = ?";
         try {
             return jdbcTemplate.update(sql, m.getId());
         } catch (Exception e) {
@@ -183,7 +188,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     @Override
     public List<Member> selectByPhone(String lastFourDigits) {
         // 전화번호 뒷자리 4자리로 끝나는 데이터 검색 (%nnnn)
-        String sql = "select * from member where phone like ?";
+        String sql = "SELECT * FROM member WHERE phone LIKE ?";
         String searchPattern = "%" + lastFourDigits;
 
         try {
@@ -200,5 +205,27 @@ public class MemberRepositoryImpl implements MemberRepository {
             System.err.println(e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    public List<Member> selectAllByLikePhone(Member m) {
+        String sql = "SELECT * FROM member WHERE phone LIKE ?";
+        try {
+            List<Member> memberList = jdbcTemplate.query(
+                    sql,
+                    (rs, i) -> Member.builder()
+                            .id(rs.getInt("id"))
+                            .email(rs.getString("email"))
+                            .fullname(rs.getString("fullname"))
+                            .phone(rs.getString("phone"))
+                            .address(rs.getString("address"))
+                            .build(),
+                    "%" + m.getPhone()
+            );
+            return memberList;
+        } catch (Exception e) {
+            System.out.println(e);
+            return null;
+        }
     }
 }

@@ -3,8 +3,10 @@ package idusw.sb.dimo202212007.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
-@Table(name="m2027")
+@Table(name="m_2026")
 @Getter
 @Setter
 @ToString
@@ -30,4 +32,7 @@ public class MemberEntity {
 
     @Column(length = 100)
     private String address;
+
+    @OneToMany(mappedBy = "writer")
+    private List<BoardEntity> boardEntityList;
 }
